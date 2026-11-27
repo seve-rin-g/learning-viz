@@ -5,10 +5,19 @@ const COURSES = require('../src/courses.js');
 
 const course = { id: 'c', code: 'C1', title: 'T', purpose: 'P', items: [{ id: 'a', title: 'A' }, { id: 'b', title: 'B' }, { id: 'c', title: 'C', group: 'G' }, { id: 'd', title: 'D' }] };
 
-test('seed data has 5 courses with unique item ids', () => {
-  assert.strictEqual(COURSES.length, 5);
+test('seed data has 15 courses with unique item ids', () => {
+  assert.strictEqual(COURSES.length, 15);
   const ids = COURSES.flatMap((c) => c.items.map((i) => i.id));
   assert.strictEqual(new Set(ids).size, ids.length);
+});
+
+test('backend certification has the 10 IBM Coursera courses', () => {
+  const backend = COURSES.filter((c) => c.purpose === 'Backend Certification');
+  assert.strictEqual(backend.length, 10);
+  assert.deepStrictEqual(backend.map((c) => c.code), [
+    'Course 1', 'Course 2', 'Course 3', 'Course 4', 'Course 5',
+    'Course 6', 'Course 7', 'Course 8', 'Course 9', 'Course 10',
+  ]);
 });
 
 test('setDone records date automatically and keeps it on re-check; clears on uncheck', () => {
