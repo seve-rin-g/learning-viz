@@ -1,0 +1,5 @@
+{
+  "name": "learning-viz",
+  "private": true,
+  "scripts": { "test": "node --test test/*.test.js" }
+}
