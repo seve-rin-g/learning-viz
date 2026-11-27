@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Progress</title>
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<header>
+  <h1>Learning Progress</h1>
+  <div class="actions">
+    <button id="export">Export JSON</button>
+    <label class="button">Import JSON<input id="import" type="file" accept="application/json" hidden></label>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Cumulative progress by course</h2>
+    <div id="plot" class="plot"></div>
+    <div id="legend" class="legend"></div>
+  </section>
+  <section>
+    <h2>Progress log</h2>
+    <table id="log">
+      <thead><tr><th>Date</th><th>Course</th><th>Lesson</th><th>Notes</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p id="empty" class="muted" hidden>Nothing completed yet — check off a lesson below.</p>
+  </section>
+  <section>
+    <h2>Courses</h2>
+    <p class="muted">Check a lesson off to record it (today's date is stamped automatically; you can adjust it). Add notes any time.</p>
+    <div id="courses"></div>
+  </section>
+</main>
+<div id="tip" class="tip" hidden></div>
+<script src="src/courses.js"></script>
+<script src="src/progress.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
