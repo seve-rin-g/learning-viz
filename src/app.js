@@ -1,10 +1,24 @@
 (function () {
   const KEY = 'learning-viz-state-v1';
-  const COLORS = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd'];
+  const PALETTES = {
+    'MS in CS-AI': ['#f2b134', '#f28e2b', '#cb6f00'],
+    'TouchDesigner Curriculum': ['#d62728', '#f04b52'],
+    'Backend Certification': [
+      '#2166ac', '#2878b5', '#4b70b7', '#6e66b5', '#905bad',
+      '#b3519d', '#d24d8a', '#e45a8a', '#e96e99', '#f08ca5',
+    ],
+  };
+  const LINE_STYLES = [
+    { dash: null, legend: 'solid' },
+    { dash: '8 4', legend: 'dashed' },
+    { dash: '2 3', legend: 'dotted' },
+  ];
   const NS = 'http://www.w3.org/2000/svg';
   const { COURSES, Progress: P } = window;
   const $ = (s) => document.querySelector(s);
-  const colorOf = (c) => COLORS[COURSES.indexOf(c) % COLORS.length];
+  const indexInPurpose = (c) => COURSES.filter((course) => course.purpose === c.purpose).indexOf(c);
+  const colorOf = (c) => PALETTES[c.purpose][indexInPurpose(c)];
+  const lineStyleOf = (c) => LINE_STYLES[indexInPurpose(c) % LINE_STYLES.length];
 
   let state = {};
   try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { state = {}; }
@@ -63,11 +77,15 @@
     all.forEach(({ c, pts }) => {
       if (!pts.length) return;
       const color = colorOf(c);
+      const lineStyle = lineStyleOf(c);
       let d = `M${x(Date.parse(pts[0].date) - DAY)},${y(0)}`;
       let prev = 0;
       pts.forEach((p) => { const px = x(Date.parse(p.date)); d += `H${px}V${y(p.pct)}`; prev = p.pct; });
       d += `H${x(Math.max(t1 - DAY, Date.parse(pts[pts.length - 1].date)))}`;
-      svg.append(svgEl('path', { d, fill: 'none', stroke: color, 'stroke-width': 2 }));
+      svg.append(svgEl('path', {
+        d, fill: 'none', stroke: color, 'stroke-width': 2,
+        ...(lineStyle.dash ? { 'stroke-dasharray': lineStyle.dash } : {}),
+      }));
       pts.forEach((p) => {
         const dot = svgEl('circle', { class: 'pt', r: 5, cx: x(Date.parse(p.date)), cy: y(p.pct), fill: color, 'data-item': p.itemId });
         dot.addEventListener('mousemove', (ev) => { showTip(ev, p); highlight(p.itemId, true); });
@@ -83,7 +101,7 @@
       const g = el('div', {}, `${purpose}: `);
       COURSES.filter((c) => c.purpose === purpose).forEach((c) => {
         const s = el('span', { style: 'margin-right:.8rem' });
-        const sw = el('i', { style: `background:${colorOf(c)}` });
+        const sw = el('i', { style: `border-top:2px ${lineStyleOf(c).legend} ${colorOf(c)}` });
         const done = c.items.filter((i) => state[i.id] && state[i.id].done).length;
         s.append(sw, `${c.code} (${done}/${c.items.length})`);
         g.append(s);
